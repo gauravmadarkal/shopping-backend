@@ -17,6 +17,7 @@ export class DBRepository {
 		@GrpcService('user') private userServiceClient: any,
 		@GrpcService('token') private tokenServiceClient: any,
 		@GrpcService('cart') private cartServiceClient: any,
+		@GrpcService('history') private buyerHistoryServiceClient: any,
 	) {}
 
 	public getProducts(): Promise<Product[]> {
@@ -32,7 +33,7 @@ export class DBRepository {
 	
 	public addProduct(product: any): Promise<any> {
 		return new Promise((resolve, reject) => {
-			this.productServiceClient.addProduct({ product }, (error: any, _: any) => {
+			this.productServiceClient.addProduct(product, (error: any, _: any) => {
 				if (error) {
 					reject(error);
 				}
@@ -66,6 +67,17 @@ export class DBRepository {
 	public addSeller(seller: any): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.sellerServiceClient.addSeller({ seller }, (error: any, _: any) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(null);
+			});
+		});
+	};
+
+	public updateSellers(sellers: any): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.sellerServiceClient.updateSellers({ sellers }, (error: any, _: any) => {
 				if (error) {
 					reject(error);
 				}
@@ -109,7 +121,7 @@ export class DBRepository {
 
 	public addUser(user: any): Promise<any> {
 		return new Promise((resolve, reject) => {
-			this.userServiceClient.addUser({ user }, (error: any, _: any) => {
+			this.userServiceClient.addUser(user, (error: any, _: any) => {
 				if (error) {
 					reject(error);
 				}
@@ -153,18 +165,18 @@ export class DBRepository {
 
 	public getCart(): Promise<any> {
 		return new Promise((resolve, reject) => {
-			this.cartServiceClient.getCart({}, (error: any, cart: any) => {
+			this.cartServiceClient.getCart({}, (error: any, response: any) => {
 				if (error) {
 					reject(error);
 				}
-				resolve(cart);
+				resolve(response.cartItems);
 			});
 		});
 	};
 
-	public putCart(cart: any): Promise<any> {
+	public putCart(cartItems: any): Promise<any> {
 		return new Promise((resolve, reject) => {
-			this.cartServiceClient.updateCart({ cart }, (error: any, _: any) => {
+			this.cartServiceClient.updateCart({ cartItems }, (error: any, _: any) => {
 				if (error) {
 					reject(error);
 				}
@@ -172,4 +184,26 @@ export class DBRepository {
 			});
 		});
 	};
+
+	public addToBuyerHistory(buyerHistory: any): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.buyerHistoryServiceClient.updateBuyerHistory(buyerHistory, (error: any, _: any) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(null);
+			});
+		});
+	}
+
+	public getBuyerHistory(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this.buyerHistoryServiceClient.getBuyerHistory({}, (error: any, response: any) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(response.history);
+			});
+		});
+	};	
 }

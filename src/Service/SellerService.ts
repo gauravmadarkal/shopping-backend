@@ -11,13 +11,14 @@ export class SellerService {
 	
 	public async getSellerItems(sellerId: string): Promise<Seller[] | any> {
 		const sellerProductIds = await this.dbRepository.getSellerProducts();
-		console.log(sellerProductIds)
-		const productIds = sellerProductIds.filter((sp: any) => sp.sellerId === sellerId)?.[0].products.map((p: any) => p.id);
-		console.log(productIds);
-		const products = await this.dbRepository.getProducts();
-		console.log(products);
-		const sellerProducts = products.filter(p => productIds.indexOf(p.itemId) > -1);
-		return sellerProducts;
+		console.log(sellerProductIds);
+		const productIds = sellerProductIds.filter((sp: any) => sp.sellerId === sellerId)?.[0]?.products?.map((p: any) => p.id);
+		if (productIds) {
+			const products = await this.dbRepository.getProducts();
+			const sellerProducts = products.filter(p => productIds.indexOf(p.itemId) > -1);
+			return sellerProducts;
+		}
+		return undefined;
 	}
 
 	public async addSellerItem(item: any, sellerId: string): Promise<Seller[] | any> {
@@ -26,12 +27,12 @@ export class SellerService {
 		const existingCount = products.filter(p => p.itemCategory === item.itemCategory).length;
 		const id = `${item.itemCategory.substr(0,1).toLowerCase()}${existingCount + 1}`;
 		item.itemId = id;
-		products.push(item);
-		sellerProductIds.forEach(sp => {
+		sellerProductIds.forEach((sp: any) => {
 			if (sp.sellerId === sellerId) {
-				sp.products.push(id);
+				sp.products.push({ id });
 			}
 		});
+		console.log(item);
 		await this.dbRepository.addProduct(item);
 		await this.dbRepository.putSellerProduct(sellerProductIds);
 	}
@@ -61,5 +62,29 @@ export class SellerService {
 			return true;
 		}
 		return false;
+	}
+
+	public async getSellerRating(sellerId: string): Promise<any> {
+		const sellers = await this.dbRepository.getSellers();
+		const seller = sellers.filter((s: any) => s.sellerId === sellerId)?.[0];
+		const sellerRating = seller.sellerLikes === 0 ? 0 : (seller.sellerLikes / (seller.sellerLikes + seller.sellerDislikes)) * 100;
+		return sellerRating;
+	}
+
+	public async addFeedback(feedback: any): Promise<any> {
+		const sellers = await this.dbRepository.getSellers();
+		const updatedSellers = sellers.map((seller: any) => {
+			if (seller.sellerId === feedback.sellerId) {
+				let uSeller;
+				if (feedback.isPositive) {
+					uSeller = { ...seller, sellerLikes: seller.sellerLikes + 1 };
+				} else {
+					uSeller = { ...seller, sellerLikes: seller.sellerDislikes + 1 };
+				}
+				return uSeller;
+			}
+			return seller;
+		});
+		await this.dbRepository.updateSellers(updatedSellers);
 	}
 }

@@ -8,7 +8,7 @@ import { ResponseFormatter } from "../Utils";
 @Service()
 export class SellerController {
 	constructor(
-		private readonly sellerService: SellerService,
+		private readonly sellerService: SellerService
 	) {}
 	
 	@Get('/items/display')
@@ -18,7 +18,10 @@ export class SellerController {
 		try {
 			const seller = req.User;
 			const items = await this.sellerService.getSellerItems(seller.id);
-			return ResponseFormatter(items, 200);
+			if (items) {
+				return ResponseFormatter(items, 200);
+			}
+			return ResponseFormatter('No items for this seller', 200);
 		} catch(err) {
 			return ResponseFormatter(err, 400);
 		}
@@ -30,7 +33,7 @@ export class SellerController {
 		@Body() item: any
 	): Promise<any> {
 		try {
-			const seller = req.Seller;
+			const seller = req.User;
 			await this.sellerService.addSellerItem(item, seller.id);
 			return ResponseFormatter("Item added", 200);
 		} catch(err) {
@@ -60,5 +63,15 @@ export class SellerController {
 			return ResponseFormatter("Item updated", 200);
 		}
 		return ResponseFormatter("Item not found", 400);
+	}
+
+	@Get('/rating')
+	public async getSellerRating(
+		@Req() req: any
+	): Promise<any> {
+		const sellerId = req.User.id;
+		const rating = await this.sellerService.getSellerRating(sellerId);
+		console.log(rating);
+		return ResponseFormatter({ sellerId, rating }, 200);
 	}
 }

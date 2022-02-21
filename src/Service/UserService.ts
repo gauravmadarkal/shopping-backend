@@ -1,6 +1,7 @@
 import { encode } from "../Utils/crypto";
 import { Service } from "typedi";
 import { DBRepository } from "../Repository";
+import * as crypto from 'crypto';
 
 
 @Service()
@@ -11,6 +12,7 @@ export class UserService {
 	
 	public async verifyUser(userName: string, password: string): Promise<any> {
 		const users = await this.dbRepository.getUsers();
+		console.log(users);
 		const user = users.filter((u: any) => u.userName === userName && u.password === password)?.[0];
 		if (user) {
 			return user;
@@ -32,7 +34,14 @@ export class UserService {
 		return token;
 	}
 
-	public async addUser(user: any): Promise<any> {
+	public async addUser(creds: any, role: string): Promise<any> {
+		const user = {
+			userName: creds.userName,
+			password: creds.password,
+			role,
+			token: null,
+			userId: crypto.randomBytes(16).toString('hex')
+		};
 		await this.dbRepository.addUser(user);
 	}
 

@@ -41,6 +41,7 @@ message Sellers {
 service SellerService {
 	rpc GetSellers(Empty) returns (Sellers) {}
 	rpc AddSeller(Seller) returns (Empty) {}
+	rpc UpdateSellers(Sellers) returns (Empty) {}
 }
 
 message Id {
@@ -105,4 +106,18 @@ message Cart {
 service CartService {
 	rpc GetCart(Empty) returns (Cart) {}
 	rpc UpdateCart(Cart) returns (Empty) {}
+}
+
+message BuyerHistory {
+	string buyerId = 1;
+	repeated CartItem cartItems = 2;
+}
+
+message History {
+	repeated BuyerHistory history = 1;
+}
+
+service BuyerHistoryService {
+	rpc UpdateBuyerHistory(BuyerHistory) returns (Empty);
+	rpc GetBuyerHistory(Empty) returns (History);
 }

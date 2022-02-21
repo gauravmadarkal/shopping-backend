@@ -32,18 +32,6 @@ export class UserController {
 		}
 	}
 
-	@Post('/register')
-	public async register(
-		@Body() body: any
-	): Promise<any> {
-		try {
-			await this.userService.addUser(body);	
-			return ResponseFormatter("User Registered successfully", 200);
-		} catch(err) {
-			return ResponseFormatter(err, 400);
-		}
-	}
-
 	@Put('/logout/:id')
 	public async logout(
 		@Param('id') id: string
@@ -51,6 +39,30 @@ export class UserController {
 		try {
 			await this.userService.logout(id);
 			return ResponseFormatter("User logged out successfully", 200);
+		} catch(err) {
+			return ResponseFormatter(err, 400);
+		}
+	}
+
+	@Post('/seller/register')
+	public async registerSeller(
+		@Body() body: any
+	): Promise<any> {
+		try {
+			await this.userService.addUser(body, 'seller');	
+			return ResponseFormatter("User Registered successfully", 200);
+		} catch(err) {
+			return ResponseFormatter(err, 400);
+		}
+	}
+
+	@Post('/buyer/register')
+	public async registerBuyer(
+		@Body() body: any
+	): Promise<any> {
+		try {
+			await this.userService.addUser(body, 'buyer');	
+			return ResponseFormatter("User Registered successfully", 200);
 		} catch(err) {
 			return ResponseFormatter(err, 400);
 		}

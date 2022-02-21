@@ -85,6 +85,17 @@ export function GrpcService(serviceId: string): ParameterDecorator {
 					index,
 					value: () => cartServiceClient,
 				});
+			case 'history':
+				const buyerHistoryServiceClient = new loadedPkgDef.BuyerHistoryService(
+					`${db_host}:${db_port}`,
+					connection
+				);
+				Container.registerHandler({
+					object,
+					propertyName,
+					index,
+					value: () => buyerHistoryServiceClient,
+				});
 		}
     };
 }
