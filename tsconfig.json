@@ -8,14 +8,26 @@
 		"emitDecoratorMetadata": true,
 		"moduleResolution": "node",
 		"importHelpers": true,
+		"allowJs": true,
+		"strictNullChecks": false,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        // "noFallthroughCasesInSwitch": true,
+        "baseUrl": ".",
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
 	},
 	"files": [
 		"./node_modules/@types/mocha/index.d.ts",
 		"./node_modules/@types/node/index.d.ts"
 	],
 	"include": [
-	 	"src/**/*.ts"
-, "src/Utils/index.js"	],
+	 	"src/**/*.ts", "src/Utils/index.js", "src/Repository/index.js"
+	],
 	"exclude": [
 	  	"node_modules"
 	]

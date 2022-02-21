@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { bootstrapMicroframework } from "microframework-w3tec";
+import { iocLoader } from './Loaders/iocLoader';
 import { expressLoader } from "./Loaders/expressLoader";
 
 bootstrapMicroframework({
@@ -8,6 +9,7 @@ bootstrapMicroframework({
      * bootstrap process. All loaders are executed one by one in a sequential order.
      */
     loaders: [
+		iocLoader,
         expressLoader,
     ],
 })
