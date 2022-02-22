@@ -3,7 +3,7 @@ import { SellerService } from "../Service/SellerService";
 import { Service } from "typedi";
 // import { BuyerMiddleware } from "src/Middlewares/RoleBasedMiddlerware";
 import { BuyerService } from "../Service/BuyerService";
-import { ResponseFormatter } from "../Utils";
+import { initiatePayment, ResponseFormatter } from "../Utils";
 
 @Authorized()
 @JsonController('/buyer')
@@ -62,14 +62,15 @@ export class BuyerController {
 		@Body() details: any,
 		@Req() req: any
 	): Promise<any> {
-		// const card = details.card;
+		const card = details.card;
 		const buyer = req.User;
 		// make api call to external service
-		const status = true;
-		if (status) {
+		const response = await initiatePayment(card);
+		if (response.result === true) {
 			await this.buyerService.checkoutCart(buyer.id);
+			return ResponseFormatter("Item purchased", 200);
 		}
-		return ResponseFormatter("Item purchased", 200);
+		return ResponseFormatter("Transaction Failed", 400);
 	}
 
 	@Put('/feedback')
