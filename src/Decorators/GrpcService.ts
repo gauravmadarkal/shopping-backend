@@ -2,6 +2,7 @@ import { Container } from 'typedi';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import * as path from 'path';
+import { grpc_host, grpc_port } from 'src/env';
 
 export function GrpcService(serviceId: string): ParameterDecorator {
     return (object: any, propertyKey, index): any => {
@@ -16,8 +17,8 @@ export function GrpcService(serviceId: string): ParameterDecorator {
 		var packageDefinition = protoLoader.loadSync(path.join(__dirname,'/proto/data.proto'), options);
 		const loadedPkgDef: any = grpc.loadPackageDefinition(packageDefinition);
 		const connection = grpc.credentials.createInsecure();
-		const db_host  = 'localhost';
-		const db_port = '50051';
+		const db_host = grpc_host;
+		const db_port = grpc_port;
         switch(serviceId) {
 			case 'product':
 				const productServiceClient = new loadedPkgDef.ProductService(
