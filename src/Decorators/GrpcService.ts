@@ -2,7 +2,7 @@ import { Container } from 'typedi';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import * as path from 'path';
-import { grpc_host, grpc_port } from 'src/env';
+import { grpc_host, grpc_port } from '../env';
 
 export function GrpcService(serviceId: string): ParameterDecorator {
     return (object: any, propertyKey, index): any => {
